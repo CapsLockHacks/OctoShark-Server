@@ -1,5 +1,7 @@
 import sys
 import base64
+import getpass
+import os
 #import paramiko
 
 from flask import Flask, render_template, jsonify, request, abort
@@ -37,11 +39,19 @@ manager = Manager(token= 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d89
 @app.route('/create')
 def create():
 	
+	user = getpass.getuser()
+	user_ssh_key = open('/home/{}/.ssh/id_rsa.pub'.format(user)).read()
+    key = SSHKey(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
+                 name='uniquehostname',
+                 public_key=user_ssh_key)
+    key.create()
+    print ("key stored in DO account")
+    print (key.name)
 
     # Create Droplet
     keys = manager.get_all_sshkeys()
 
-    droplet = Droplet(token=request.args.get('token'),
+    droplet = Droplet(token=requests.args.get('token'),
                                    name=requests.args.get('name'),
                                    region=requests.args.get('region'), # Bangalore
                                    image='docker-16-04', # Docker
