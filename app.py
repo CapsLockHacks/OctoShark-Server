@@ -1,7 +1,7 @@
 import sys
 from flask import Flask, render_template, jsonify, request, abort
 import subprocess
-from digitalocean import SSHKey, Manager
+from digitalocean import SSHKey, Manager, Droplet
 
 
 app = Flask(__name__)
@@ -21,22 +21,25 @@ def login():
     print(my_droplets)
 
     user_ssh_key = request.args.get('ssh')
-    key = SSHKey(token='secretspecialuniquesnowflake',
+    key = SSHKey(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
                  name='uniquehostname',
                  public_key=user_ssh_key)
     # key is created succesfully.
     key.create()
     return "Login Success"
 
+manager = Manager(token= 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb')
+
 @app.route('/create')
- 
+def create():
+
     # Create Droplet
     keys = manager.get_all_sshkeys()
 
-    droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
-                                   name='DropletGHTest',
-                                   region='blr1', # bangalore
-                                   image='docker-16-04', # Ubuntu 14.04 x64
+    droplet = Droplet(token="bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb",
+                                   name='DropletWithSSHKeys',
+                                   region='ams3', # Amster
+                                   image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
                                    size_slug='512mb',  # 512MB
                                    ssh_keys=keys, #Automatic conversion
                                    backups=False)
