@@ -42,8 +42,8 @@ def create():
     keys = manager.get_all_sshkeys()
 
     droplet = Droplet(token=request.args.get('token'),
-                                   name=requests.args.get('name'),
-                                   region=requests.args.get('region'), # Bangalore
+                                   name=request.args.get('name'),
+                                   region=request.args.get('region'), # Bangalore
                                    image='docker-16-04', # Docker
                                    size_slug='512mb',  # 512MB
                                    ssh_keys=keys, #Automatic conversion
