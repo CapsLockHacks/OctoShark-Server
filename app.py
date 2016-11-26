@@ -2,8 +2,8 @@ import sys
 import base64
 import getpass
 import os
-#import paramiko
-import os
+
+import paramiko
 from flask import Flask, render_template, jsonify, request, abort
 import subprocess
 from digitalocean import SSHKey, Manager, Droplet
@@ -44,22 +44,41 @@ def create():
 	key = SSHKey(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
 				 name='uniquehostname',
 				 public_key=user_ssh_key)
-	key.create()
+	try:
+		key.create()
+	except:
+		pass
 	print ("key stored in DO account")
 	print (key.name)
 
 	# Create Droplet
 	keys = manager.get_all_sshkeys()
 
-	droplet = Droplet(token=request.args.get('token'),
-								   name=request.args.get('name'),
-								   region=request.args.get('region'), # Bangalore
+	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
+								   name='testssh',
+								   region='blr1', # Bangalore
 								   image='docker-16-04', # Docker
-								   size_slug=request.args.get('size'),  # '512mb'
+								   size_slug='512mb',  # '512mb'
 								   ssh_keys=keys, #Automatic conversion
 								   backups=False)
 	droplet.create()
-	return "DO Created"
+
+	droplet_ip = droplet.ip_address
+	# get user's ssh key
+	user_ssh_key = '/home/{}/.ssh/id_rsa.pub'.format(getpass.getuser())
+	
+	client = paramiko.SSHClient()
+	client.set_missing_host_key_policy(paramiko.AutoAddPolicy())   
+	client.connect(droplet_ip, username='root', key_filename=user_ssh_key)
+
+	# running test command	
+	stdin, stdout, stderr = client.exec_command('ls')
+	print ('running ls command on droplet')
+	for line in stdout:
+    	print '... ' + line.strip('\n')
+	client.close()
+
+	return "DO Created & ssh tested"
 '''
 @app.run('/run')
 def run():
@@ -72,7 +91,7 @@ def run():
 	for line in stdout:
 		print ('... ' + line.strip('\n'))
 	client.close()
-'''
+"""
 
 @app.route('/')
 def index():
