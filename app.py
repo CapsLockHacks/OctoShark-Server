@@ -4,7 +4,7 @@ from flask import Flask, render_template, jsonify, request
 from digitalocean import SSHKey, Manager
 
 app = Flask(__name__)
-manager = digitalocean.Manager(token="24611cca29682d3d54f8208b67a47dbe8b6ea01b2c8103ba61150ece4b6259b6")
+manager = Manager(token="24611cca29682d3d54f8208b67a47dbe8b6ea01b2c8103ba61150ece4b6259b6")
 my_droplets = manager.get_all_droplets()
 # Check for success
 print(my_droplets)
