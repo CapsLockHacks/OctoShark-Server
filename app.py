@@ -114,6 +114,7 @@ if __name__ == '__main__':
 	sys.exit(main())
 
 
-
+"""
 stdin, stdout, stderr = client.exec_command('cd {}; ls'.format(repo_name))
 cmds = ['cd {}'.format(repo_name); 'docker build -t "{}" .'.format('octocat'); 'docker run {}'.format('octocat')]
+"""
