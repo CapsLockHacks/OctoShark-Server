@@ -34,7 +34,7 @@ def login():
 	return "Login Success"
 
 token = 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb'
-repo_url = 'https://github.com/CapsLockHacks/dockerfile_test'
+repo_url = 'https://github.com/coala/dockerfile_test/docker-coala-base'
 manager = Manager(token=token)
 
 
@@ -59,7 +59,7 @@ def create():
 	keys = manager.get_all_sshkeys()
 
 	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-								name='docker',
+								name='dockerhelloworld',
 								region='blr1', # Bangalore
 								image='docker-16-04', # Docker
 								size_slug='512mb',  # '512mb'
@@ -98,15 +98,27 @@ def commandrun(droplet):
 	stdin, stdout, stderr = client.exec_command('git clone {}'.format(repo_url))
 	repo_name =  repo_url.split('/') 
 	repo_name = repo_name[4].split('.')[0]
-	# do all 3 commands in one line
-	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker build -t "octoshark" .;docker run octoshark;'.format(repo_name))
 
-	print ('stdout..')
-	# print stdout of the following
+
+	stdin, stdout, stderr = client.exec_command('docker run -d -p 80:5000 training/webapp python app.py')
 	for line in stdout:
 		print ('... ' + line.strip('\n'))
 
+	stdin, stdout, stderr = client.exec_command('docker ps')
+	for line in stdout:
+		print ('... ' + line.strip('\n'))
+
+	# do all 3 commands in one line
+	# stdin, stdout, stderr = client.exec_command('cd {};pwd;docker build -t "octoshark" .;docker run octoshark;'.format(repo_name))
+
+	# print ('stdout..')
+	# print stdout of the following
+	# for line in stdout:
+	# 	print ('... ' + line.strip('\n'))
+
+	print ('closing client ssh client')
 	client.close()
+	print ('ssh client closed')
 	return "Success"
 
 
@@ -124,6 +136,7 @@ if __name__ == '__main__':
 
 
 """
+139.59.28.189
 stdin, stdout, stderr = client.exec_command('cd {}; ls'.format(repo_name))
 cmds = ['cd {}'.format(repo_name); 'docker build -t "{}" .'.format('octocat'); 'docker run {}'.format('octocat')]
 """
