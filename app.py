@@ -34,9 +34,47 @@ def login():
 	return "Login Success"
 
 token = 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb'
+repo_url = ''
 manager = Manager(token=token)
 
+
+@app.route('/create')
+def create():
+	
+	user = getpass.getuser()
+	user_ssh_key = open('/home/{}/.ssh/id_rsa.pub'.format(user)).read()
+	key = SSHKey(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
+				 name='uniquehostname',
+				 public_key=user_ssh_key)
+
+	try:
+		key.create()
+	except:
+		pass
+	print ("key stored in Digital Ocean account")
+	print (key.name)
+
+	# Create Droplet
+	# get all ssh keys stored in the digitalocean account
+	keys = manager.get_all_sshkeys()
+
+	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
+								name='testssh',
+								region='blr1', # Bangalore
+								image='docker-16-04', # Docker
+								size_slug='512mb',  # '512mb'
+								ssh_keys=keys, #Automatic conversion
+								backups=False)
+	droplet.create()
+	
+	status = commandrun()
+	print(status)
+
+	return "DO Created & ssh tested"
+
 def commandrun(droplet, repo_url):
+
+	# get IP address using droplet.id
 	response = requests.get('https://api.digitalocean.com/v2/droplets/'+str(droplet.id), 
 		headers={'Authorization': 'Bearer {}'.format(token)})
 	droplet_ip = response.json()['droplet']['networks']['v4'][0]['ip_address']
@@ -57,53 +95,20 @@ def commandrun(droplet, repo_url):
 	# print ('mission complete')
 
 	# run docker
-	repo_url = ''
 	stdin, stdout, stderr = client.exec_command('git clone {}'.format(repo_url))
 	repo_name =  repo_url.split('/') 
 	repo_name = repo_name[4].split('.')[0]
 	# do all 3 commands in one line
 	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker build -t "octoshark" .;docker run octoshark;'.format(repo_name))
 
+	print ('stdout..')
 	# print stdout of the following
 	for line in stdout:
 		print ('... ' + line.strip('\n'))
 
 	client.close()
-
 	return "Success"
 
-@app.route('/create')
-def create():
-	
-	user = getpass.getuser()
-	user_ssh_key = open('/home/{}/.ssh/id_rsa.pub'.format(user)).read()
-	key = SSHKey(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-				 name='uniquehostname',
-				 public_key=user_ssh_key)
-
-	try:
-		key.create()
-	except:
-		pass
-	print ("key stored in DO account")
-	print (key.name)
-
-	# Create Droplet
-	keys = manager.get_all_sshkeys()
-
-	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-								name='testssh',
-								region='blr1', # Bangalore
-								image='docker-16-04', # Docker
-								size_slug='512mb',  # '512mb'
-								ssh_keys=keys, #Automatic conversion
-								backups=False)
-	droplet.create()
-	
-	status = commandrun()
-	print(status)
-
-	return "DO Created & ssh tested"
 
 @app.route('/')
 def index():
