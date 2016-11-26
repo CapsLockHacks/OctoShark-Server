@@ -34,7 +34,7 @@ def login():
 	return "Login Success"
 
 token = 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb'
-repo_url = ''
+repo_url = 'https://github.com/CapsLockHacks/dockerfile_test'
 manager = Manager(token=token)
 
 
@@ -59,7 +59,7 @@ def create():
 	keys = manager.get_all_sshkeys()
 
 	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-								name='testssh',
+								name='docker',
 								region='blr1', # Bangalore
 								image='docker-16-04', # Docker
 								size_slug='512mb',  # '512mb'
@@ -67,12 +67,12 @@ def create():
 								backups=False)
 	droplet.create()
 	
-	status = commandrun()
+	status = commandrun(droplet=droplet)
 	print(status)
 
 	return "DO Created & ssh tested"
 
-def commandrun(droplet, repo_url):
+def commandrun(droplet):
 
 	# get IP address using droplet.id
 	response = requests.get('https://api.digitalocean.com/v2/droplets/'+str(droplet.id), 
