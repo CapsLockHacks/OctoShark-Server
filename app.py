@@ -1,7 +1,7 @@
 import sys
 import base64
 #import paramiko
-
+import os
 from flask import Flask, render_template, jsonify, request, abort
 import subprocess
 from digitalocean import SSHKey, Manager, Droplet
@@ -69,7 +69,8 @@ def index():
     return 'Hello World'
 
 def main():
-    app.run(host="0.0.0.0", debug=True)
+    port = int(os.environ.get('PORT',5000))
+    app.run(host="0.0.0.0", port = port, debug=True)
 
 
 if __name__ == '__main__':
