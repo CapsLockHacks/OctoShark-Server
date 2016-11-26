@@ -49,6 +49,7 @@ def create():
                                    backups=False)
     droplet.create()
     return "DO Created"
+'''
 @app.run('/run')
 def run():
     # Need SSH Key in req.args
@@ -58,9 +59,9 @@ def run():
     client.connect('ssh.example.com', username='strongbad', password='thecheat')
     stdin, stdout, stderr = client.exec_command('ls')
     for line in stdout:
-        print '... ' + line.strip('\n')
+        print ('... ' + line.strip('\n'))
     client.close()
-
+'''
 
 @app.route('/')
 def index():
