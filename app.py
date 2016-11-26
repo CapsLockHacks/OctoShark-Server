@@ -58,7 +58,7 @@ def run():
     client.connect('ssh.example.com', username='strongbad', password='thecheat')
     stdin, stdout, stderr = client.exec_command('ls')
     for line in stdout:
-        print '... ' + line.strip('\n')
+        print ('... ' + line.strip('\n'))
     client.close()
 
 
