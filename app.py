@@ -29,15 +29,14 @@ def login():
     return "Login Success"
 
 @app.route('/create')
-def create():
-
+ 
     # Create Droplet
     keys = manager.get_all_sshkeys()
 
     droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
-                                   name='DropletWithSSHKeys',
-                                   region='ams3', # Amster
-                                   image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
+                                   name='DropletGHTest',
+                                   region='blr1', # bangalore
+                                   image='docker-16-04', # Ubuntu 14.04 x64
                                    size_slug='512mb',  # 512MB
                                    ssh_keys=keys, #Automatic conversion
                                    backups=False)
