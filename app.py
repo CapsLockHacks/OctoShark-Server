@@ -36,34 +36,7 @@ def login():
 token = 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb'
 manager = Manager(token=token)
 
-@app.route('/create')
-def create():
-	
-	user = getpass.getuser()
-	user_ssh_key = open('/home/{}/.ssh/id_rsa.pub'.format(user)).read()
-	key = SSHKey(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-				 name='uniquehostname',
-				 public_key=user_ssh_key)
-
-	try:
-		key.create()
-	except:
-		pass
-	print ("key stored in DO account")
-	print (key.name)
-
-	# Create Droplet
-	keys = manager.get_all_sshkeys()
-
-	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-								name='testssh',
-								region='blr1', # Bangalore
-								image='docker-16-04', # Docker
-								size_slug='512mb',  # '512mb'
-								ssh_keys=keys, #Automatic conversion
-								backups=False)
-	droplet.create()
-	
+def commandrun(droplet, repo_url):
 	response = requests.get('https://api.digitalocean.com/v2/droplets/'+str(droplet.id), 
 		headers={'Authorization': 'Bearer {}'.format(token)})
 	droplet_ip = response.json()['droplet']['networks']['v4'][0]['ip_address']
@@ -97,9 +70,40 @@ def create():
 
 	client.close()
 
-	return "DO Created & ssh tested"
+	return "Success"
 
-@app.
+@app.route('/create')
+def create():
+	
+	user = getpass.getuser()
+	user_ssh_key = open('/home/{}/.ssh/id_rsa.pub'.format(user)).read()
+	key = SSHKey(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
+				 name='uniquehostname',
+				 public_key=user_ssh_key)
+
+	try:
+		key.create()
+	except:
+		pass
+	print ("key stored in DO account")
+	print (key.name)
+
+	# Create Droplet
+	keys = manager.get_all_sshkeys()
+
+	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
+								name='testssh',
+								region='blr1', # Bangalore
+								image='docker-16-04', # Docker
+								size_slug='512mb',  # '512mb'
+								ssh_keys=keys, #Automatic conversion
+								backups=False)
+	droplet.create()
+	
+	status = commandrun()
+	print(status)
+
+	return "DO Created & ssh tested"
 
 @app.route('/')
 def index():
