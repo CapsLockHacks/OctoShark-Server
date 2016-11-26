@@ -2,12 +2,12 @@ import sys
 import base64
 import getpass
 import os
+from threading import Thread
 
 import paramiko
 from flask import Flask, render_template, jsonify, request, abort
 from flask.ext.cors import CORS, cross_origin
 
-import subprocess
 from digitalocean import SSHKey, Manager, Droplet
 import requests
 
@@ -73,8 +73,7 @@ def create():
 								backups=False)
 	droplet.create()
 	
-	status = commandrun(droplet=droplet)
-	print(status)
+	thread = Thread(commandrun(droplet=droplet))
 
 	return "DO Created & ssh tested"
 
