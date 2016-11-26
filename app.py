@@ -5,14 +5,18 @@ import os
 
 import paramiko
 from flask import Flask, render_template, jsonify, request, abort
+from flask.ext.cors import CORS, cross_origin
 import subprocess
 from digitalocean import SSHKey, Manager, Droplet
 import requests
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 @app.route('/login')
+@cross_origin()
 def login():
 	if request.args.get('code') is None:
 		abort(404)
@@ -39,6 +43,7 @@ manager = Manager(token=token)
 
 
 @app.route('/create')
+@cross_origin()
 def create():
 	
 	user = getpass.getuser()
@@ -123,8 +128,9 @@ def commandrun(droplet):
 
 
 @app.route('/')
+@cross_origin()
 def index():
-	return 'Hello World'
+	return 'Hello, cross-origin-world!'
 
 def main():
 	port = int(os.environ.get('PORT',5000))
