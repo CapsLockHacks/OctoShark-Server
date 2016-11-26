@@ -7,7 +7,7 @@ import paramiko
 from flask import Flask, render_template, jsonify, request, abort
 import subprocess
 from digitalocean import SSHKey, Manager, Droplet
-
+import requests
 
 app = Flask(__name__)
 
@@ -33,8 +33,8 @@ def login():
 	key.create()
 	return "Login Success"
 
-manager = Manager(token= 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb')
-
+token = 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb'
+manager = Manager(token=token)
 
 @app.route('/create')
 def create():
@@ -44,6 +44,7 @@ def create():
 	key = SSHKey(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
 				 name='uniquehostname',
 				 public_key=user_ssh_key)
+
 	try:
 		key.create()
 	except:
@@ -55,15 +56,19 @@ def create():
 	keys = manager.get_all_sshkeys()
 
 	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-								   name='testssh',
-								   region='blr1', # Bangalore
-								   image='docker-16-04', # Docker
-								   size_slug='512mb',  # '512mb'
-								   ssh_keys=keys, #Automatic conversion
-								   backups=False)
+								name='testssh',
+								region='blr1', # Bangalore
+								image='docker-16-04', # Docker
+								size_slug='512mb',  # '512mb'
+								ssh_keys=keys, #Automatic conversion
+								backups=False)
 	droplet.create()
-
-	droplet_ip = droplet.ip_address
+	
+	response = requests.get('https://api.digitalocean.com/v2/droplets/'+str(droplet.id), 
+		headers={'Authorization': 'Bearer {}'.format(token)})
+	droplet_ip = response.json()['droplet']['networks']['v4'][0]['ip_address']
+	print ("droplet ip {}".format(droplet_ip))
+	
 	# get user's ssh key
 	user_ssh_key = '/home/{}/.ssh/id_rsa.pub'.format(getpass.getuser())
 	
@@ -72,13 +77,29 @@ def create():
 	client.connect(droplet_ip, username='root', key_filename=user_ssh_key)
 
 	# running test command	
-	stdin, stdout, stderr = client.exec_command('ls')
-	print ('running ls command on droplet')
+	# stdin, stdout, stderr = client.exec_command('ls')
+	# print ('running ls command on droplet')
+	# for line in stdout:
+	# 	print ('... ' + line.strip('\n'))
+	# print ('mission complete')
+
+	# run docker
+	repo_url = ''
+	stdin, stdout, stderr = client.exec_command('git clone {}'.format(repo_url))
+	repo_name =  repo_url.split('/') 
+	repo_name = repo_name[4].split('.')[0]
+	# do all 3 commands in one line
+	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker build -t "octoshark" .;docker run octoshark;'.format(repo_name))
+
+	# print stdout of the following
 	for line in stdout:
-    	print '... ' + line.strip('\n')
+		print ('... ' + line.strip('\n'))
+
 	client.close()
 
 	return "DO Created & ssh tested"
+
+@app.
 
 @app.route('/')
 def index():
@@ -91,3 +112,9 @@ def main():
 
 if __name__ == '__main__':
 	sys.exit(main())
+
+
+"""
+stdin, stdout, stderr = client.exec_command('cd {}; ls'.format(repo_name))
+cmds = ['cd {}'.format(repo_name); 'docker build -t "{}" .'.format('octocat'); 'docker run {}'.format('octocat')]
+"""
