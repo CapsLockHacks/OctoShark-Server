@@ -9,10 +9,10 @@ app = Flask(__name__)
 
 @app.route('/login')
 def login():
-    if request.args.get('token') is None and request.args.get('ssh') is None:
+    if request.args.get('code') is None:
         abort(404)
     # Get from Chrome extension
-    token = request.args.get('token')
+    token = request.args.get('code')
     manager = Manager(token=token)
 
     # Instantiate ``api`` object to setup authentication for DO API.
@@ -29,6 +29,7 @@ def login():
     return "Login Success"
 
 manager = Manager(token= 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb')
+
 
 @app.route('/create')
 def create():
