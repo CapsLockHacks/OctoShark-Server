@@ -1,5 +1,5 @@
 import sys
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, abort
 import subprocess
 from digitalocean import SSHKey, Manager
 
@@ -9,6 +9,8 @@ app = Flask(__name__)
 
 @app.route('/login')
 def login():
+    if request.args.get('token') is None and request.args.get('ssh') is None:
+        abort(404)
     # Get from Chrome extension
     token = request.args.get('token')
     manager = Manager(token=token)
@@ -24,6 +26,7 @@ def login():
                  public_key=user_ssh_key)
     # key is created succesfully.
     key.create()
+    return "Login Success"
 
 @app.route('/create')
 def create():
@@ -39,7 +42,7 @@ def create():
                                    ssh_keys=keys, #Automatic conversion
                                    backups=False)
     droplet.create()
-
+    return "DO Created"
 
 
 @app.route('/')
