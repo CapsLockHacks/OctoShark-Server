@@ -38,8 +38,8 @@ def create():
 
     droplet = Droplet(token="bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb",
                                    name='DropletWithSSHKeys',
-                                   region='ams3', # Amster
-                                   image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
+                                   region='blr1', # Bangalore
+                                   image='docker-16-04', # Docker
                                    size_slug='512mb',  # 512MB
                                    ssh_keys=keys, #Automatic conversion
                                    backups=False)
