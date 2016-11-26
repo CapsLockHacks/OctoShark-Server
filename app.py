@@ -1,6 +1,6 @@
 import sys
 import base64
-import paramiko
+#import paramiko
 
 from flask import Flask, render_template, jsonify, request, abort
 import subprocess
@@ -36,13 +36,14 @@ manager = Manager(token= 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d89
 
 @app.route('/create')
 def create():
+	
 
     # Create Droplet
     keys = manager.get_all_sshkeys()
 
-    droplet = Droplet(token="bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb",
-                                   name='DropletWithSSHKeys',
-                                   region='blr1', # Bangalore
+    droplet = Droplet(token=request.args.get('token'),
+                                   name=requests.args.get('name'),
+                                   region=requests.args.get('region'), # Bangalore
                                    image='docker-16-04', # Docker
                                    size_slug='512mb',  # 512MB
                                    ssh_keys=keys, #Automatic conversion
