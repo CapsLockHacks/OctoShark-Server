@@ -17,7 +17,7 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-@app.route('/login' methods=['POST'])
+@app.route('/login')
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def login():
 	if request.args.get('code') is None:
@@ -87,9 +87,10 @@ def create():
 	droplet.create()
 	
 	thread = Thread(target=commandrun, args=[droplet])
-	thread.run()
+	thread.start()
 
 	print ("droplet id {}".format(droplet.id))
+	print ("DO Created & ssh tested")
 	return ("DO Created & ssh tested")
 
 def commandrun(droplet):
