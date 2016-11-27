@@ -87,9 +87,10 @@ def create():
 	droplet.create()
 	
 	thread = Thread(target=commandrun, args=[droplet])
-	thread.run()
+	thread.start()
 
 	print ("droplet id {}".format(droplet.id))
+	print ("DO Created & ssh tested")
 	return ("DO Created & ssh tested")
 
 def commandrun(droplet):
