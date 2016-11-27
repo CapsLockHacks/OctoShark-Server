@@ -102,7 +102,9 @@ def commandrun(droplet):
 	
 	# get user's ssh key
 	user_ssh_key = '/home/{}/.ssh/id_rsa.pub'.format(getpass.getuser())
-	
+	logging.basicConfig(filename='myapp.log', level=logging.INFO)
+    logging.debug('Started')
+
 	client = paramiko.SSHClient()
 	client.set_missing_host_key_policy(paramiko.AutoAddPolicy())   
 	client.connect(droplet_ip, username='root', key_filename=user_ssh_key)
@@ -115,13 +117,13 @@ def commandrun(droplet):
 	# print ('mission complete')
 
 	# run docker
-	print("Cloning started")
+	logging.debug("Cloning started")
 	stdin, stdout, stderr = client.exec_command('git clone {}'.format(repo_url))
 	
 	repo_name =  repo_url.split('/') 
 	repo_name = repo_name[4].split('.')[0]
 
-	print ('clone sucessful')
+	logging.debug('clone sucessful')
 	
 
 
@@ -135,10 +137,16 @@ def commandrun(droplet):
 	
 	# do all 3 commands in one line
 	print ('going into {}'.format(repo_name))
-	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker build -t octoshark . ;'.format(repo_name))
+	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker build -t octoshark . '.format(repo_name))
 
 	print ('stdout of the following')
 	for line in stdout:
+		print ('... ' + line.strip('\n'))
+	print ('stdin of the following')
+	for line in stdin:
+		print ('... ' + line.strip('\n'))
+	print ('stderr of the following')
+	for line in stderr:
 		print ('... ' + line.strip('\n'))
 
 	# if('webapp' in repo_name):
