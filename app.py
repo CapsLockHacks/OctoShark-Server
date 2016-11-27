@@ -58,6 +58,7 @@ def create():
 		key.create()
 	except:
 		pass
+
 	print ("key stored in Digital Ocean account")
 	print (key.name)
 
@@ -138,7 +139,7 @@ def commandrun(droplet):
 	
 	# do all 3 commands in one line
 	print ('going into {}'.format(repo_name))
-	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker build -t octoshark . '.format(repo_name))
+	stdin, stdout, stderr = client.exec_command('git clone {0};cd {1};docker run -d -P training/webapp python app.py'.format(repo_url, repo_name))
 
 	print ('stdout of the following')
 	for line in stdout:
@@ -146,7 +147,7 @@ def commandrun(droplet):
 	
 
 	# if('webapp' in repo_name):
-	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker run -d -P octoshark;'.format(repo_name))
+	# stdin, stdout, stderr = client.exec_command('cd {};pwd;docker run -d -P octoshark; docker ps'.format(repo_name))
 
 	print ('closing client ssh client')
 	client.close()
