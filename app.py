@@ -76,8 +76,8 @@ def create():
 
 
 	# from chrome extension
-	token = request.args.get['repo_url']	
-	repo_url = request.args.get['repo_url']
+	token = request.args.get['token']	
+	repo_url = request.args.get['giturl']
 	droplet = Droplet(token=request.args.get['token'],
 						name=request.args.get['name'],
 						region=request.args.get['region'],
