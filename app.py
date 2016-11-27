@@ -16,7 +16,7 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-@app.route('/login')
+@app.route('/login' methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def login():
 	if request.args.get('code') is None:
@@ -65,7 +65,7 @@ def create():
 	keys = manager.get_all_sshkeys()
 
 	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-								name='dockerhelloworld',
+								name='finaldockertest',
 								region='blr1', # Bangalore
 								image='docker-16-04', # Docker
 								size_slug='512mb',  # '512mb'
@@ -86,6 +86,9 @@ def create():
 	droplet.create()
 	
 	thread = Thread(target=commandrun, args=[droplet])
+	thread.run()
+
+	print ("droplet id {}".format(droplet.id))
 	return ("DO Created & ssh tested")
 
 def commandrun(droplet):
@@ -111,7 +114,9 @@ def commandrun(droplet):
 	# print ('mission complete')
 
 	# run docker
+	print("Cloning started")
 	stdin, stdout, stderr = client.exec_command('git clone {}'.format(repo_url))
+	
 	repo_name =  repo_url.split('/') 
 	repo_name = repo_name[4].split('.')[0]
 
@@ -135,8 +140,8 @@ def commandrun(droplet):
 	for line in stdout:
 		print ('... ' + line.strip('\n'))
 
-	if('webapp' in repo_name):
-		stdin, stdout, stderr = client.exec_command('cd {};pwd;docker run -d -P octoshark;'.format(repo_name))
+	# if('webapp' in repo_name):
+	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker run -d -P octoshark;'.format(repo_name))
 
 	print ('closing client ssh client')
 	client.close()
