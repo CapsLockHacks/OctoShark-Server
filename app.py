@@ -39,7 +39,7 @@ def login():
 	return "Login Success"
 
 token = 'bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb'
-repo_url = 'https://github.com/wadmiraal/docker-drupal'
+repo_url = 'https://github.com/CapsLockHacks/dockerfile_test'
 manager = Manager(token=token)
 
 
@@ -86,15 +86,7 @@ def create():
 	droplet.create()
 	
 	thread = Thread(target=commandrun, args=[droplet])
-
-
-	# get IP address using droplet.id
-	response = requests.get('https://api.digitalocean.com/v2/droplets/'+str(droplet.id), 
-		headers={'Authorization': 'Bearer {}'.format(token)})
-	droplet_ip = response.json()['droplet']['networks']['v4'][0]['ip_address']
-	print ("droplet ip {}".format(droplet_ip))
-
-	return "DO Created & ssh tested, "+droplet_ip
+	return ("DO Created & ssh tested")
 
 def commandrun(droplet):
 
