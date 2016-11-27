@@ -66,25 +66,25 @@ def create():
 	# get all ssh keys stored in the digitalocean account
 	keys = manager.get_all_sshkeys()
 
-# 	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
-# 								name='finaldockertest',
-# 								region='blr1', # Bangalore
-# 								image='docker-16-04', # Docker
-# 								size_slug='512mb',  # '512mb'
-# 								ssh_keys=keys, #Automatic conversion
-# 								backups=False)
+	droplet = Droplet(token='bb7f9e5b82a17b7304efde1b9cd886fc329f09340fa172c3c27d890b099c25cb',
+								name=request.args.get['name'],
+								region='blr1', # Bangalore
+								image='docker-16-04', # Docker
+								size_slug='512mb',  # '512mb'
+								ssh_keys=keys, #Automatic conversion
+								backups=False)
 
 
 	# from chrome extension
-	token = request.args.get['token']	
-	repo_url = request.args.get['giturl']
-	droplet = Droplet(token=request.args.get['token'],
-						name=request.args.get['name'],
-						region=request.args.get['region'],
-						image='docker-16-04',
-						size_slug=request.args.get['size'],
-						ssh_keys=keys,
-						backups=False)
+	# token = request.args.get['token']	
+	# repo_url = request.args.get['giturl']
+	# droplet = Droplet(token=request.args.get['token'],
+	# 					name=request.args.get['name'],
+	# 					region=request.args.get['region'],
+	# 					image='docker-16-04',
+	# 					size_slug=request.args.get['size'],
+	# 					ssh_keys=keys,
+	# 					backups=False)
 
 	droplet.create()
 	
