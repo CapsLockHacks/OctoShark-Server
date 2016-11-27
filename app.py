@@ -104,7 +104,7 @@ def commandrun(droplet):
 	# get user's ssh key
 	user_ssh_key = '/home/{}/.ssh/id_rsa.pub'.format(getpass.getuser())
 	logging.basicConfig(filename='myapp.log', level=logging.INFO)
-    logging.debug('Started')
+	logging.debug('Started')
 
 	client = paramiko.SSHClient()
 	client.set_missing_host_key_policy(paramiko.AutoAddPolicy())   
