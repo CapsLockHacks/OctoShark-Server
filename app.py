@@ -3,6 +3,7 @@ import base64
 import getpass
 import os
 from threading import Thread
+import logging
 
 import paramiko
 from flask import Flask, render_template, jsonify, request, abort
@@ -43,7 +44,7 @@ repo_url = 'https://github.com/CapsLockHacks/dockerfile_test'
 manager = Manager(token=token)
 
 
-@app.route('/create')
+@app.route('/create', methods=['GET'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def create():
 	
