@@ -143,12 +143,7 @@ def commandrun(droplet):
 	print ('stdout of the following')
 	for line in stdout:
 		print ('... ' + line.strip('\n'))
-	print ('stdin of the following')
-	for line in stdin:
-		print ('... ' + line.strip('\n'))
-	print ('stderr of the following')
-	for line in stderr:
-		print ('... ' + line.strip('\n'))
+	
 
 	# if('webapp' in repo_name):
 	stdin, stdout, stderr = client.exec_command('cd {};pwd;docker run -d -P octoshark;'.format(repo_name))
