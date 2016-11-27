@@ -71,11 +71,30 @@ def create():
 								size_slug='512mb',  # '512mb'
 								ssh_keys=keys, #Automatic conversion
 								backups=False)
+
+
+	# from chrome extension
+	# repo_url = request.args.get['repo_url']
+	# droplet = Droplet(token=request.args.get['token'],
+	# 					name=request.args.get['name'],
+	# 					region=request.args.get['region'],
+	# 					image='docker-16-04',
+	# 					size_slug=request.args.get['size'],
+	# 					ssh_keys=keys,
+	# 					backups=False)
+
 	droplet.create()
 	
 	thread = Thread(commandrun(droplet=droplet))
 
-	return "DO Created & ssh tested"
+
+	# get IP address using droplet.id
+	response = requests.get('https://api.digitalocean.com/v2/droplets/'+str(droplet.id), 
+		headers={'Authorization': 'Bearer {}'.format(token)})
+	droplet_ip = response.json()['droplet']['networks']['v4'][0]['ip_address']
+	print ("droplet ip {}".format(droplet_ip))
+
+	return "DO Created & ssh tested, "+droplet_ip
 
 def commandrun(droplet):
 
