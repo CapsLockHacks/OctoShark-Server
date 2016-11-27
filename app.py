@@ -17,7 +17,7 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-@app.route('/login' methods=['POST'])
+@app.route('/login')
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def login():
 	if request.args.get('code') is None:
