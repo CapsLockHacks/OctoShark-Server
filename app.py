@@ -76,7 +76,7 @@ def create():
 
 
 	# from chrome extension
-	token = args.get['repo_url']	
+	token = request.args.get['repo_url']	
 	repo_url = request.args.get['repo_url']
 	droplet = Droplet(token=request.args.get['token'],
 						name=request.args.get['name'],
